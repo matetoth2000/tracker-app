@@ -1,4 +1,7 @@
 {
   "name": "tracker-app",
-  "slug": "tracker-app"
+  "slug": "tracker-app",
+  "plugins": [
+    "expo-router"
+  ]
 }
