@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "650 Industries, Inc.",
   "license": "MIT",
-  "main": "build/index",
+  "main": "expo-router/entry",
   "types": "build/index.d.ts",
   "sideEffects": [
     "rsc/entry.js",
@@ -137,6 +137,7 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/native": "^7.1.8",
     "@react-navigation/native-stack": "^7.3.16",
+    "@supabase/supabase-js": "^2.89.0",
     "client-only": "^0.0.1",
     "debug": "^4.3.4",
     "escape-string-regexp": "^4.0.0",
