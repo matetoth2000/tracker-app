@@ -2,6 +2,7 @@
   "name": "tracker-app",
   "slug": "tracker-app",
   "plugins": [
-    "expo-router"
+    "expo-router",
+    "expo-web-browser"
   ]
 }

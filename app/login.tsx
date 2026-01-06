@@ -8,11 +8,12 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isGoogleSigningIn, setIsGoogleSigningIn] = useState(false);
 
   const handleSignIn = async () => {
     setErrorMessage('');
-    setIsLoading(true);
+    setIsSigningIn(true);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -21,16 +22,16 @@ export default function LoginScreen() {
 
     if (error) {
       setErrorMessage(error.message);
-      setIsLoading(false);
+      setIsSigningIn(false);
       return;
     }
 
-    router.replace('/home');
+    router.replace('/(tabs)');
   };
 
   const handleSignUp = async () => {
     setErrorMessage('');
-    setIsLoading(true);
+    setIsSigningIn(true);
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -39,27 +40,30 @@ export default function LoginScreen() {
 
     if (error) {
       setErrorMessage(error.message);
-      setIsLoading(false);
+      setIsSigningIn(false);
       return;
     }
 
-    router.replace('/home');
+    router.replace('/(tabs)');
   };
 
   const handleGoogleSignIn = async () => {
     setErrorMessage('');
-    setIsLoading(true);
+    setIsGoogleSigningIn(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+        },
+      });
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
-      },
-    });
-
-    if (error) {
-      setErrorMessage(error.message);
-      setIsLoading(false);
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+    } finally {
+      setIsGoogleSigningIn(false);
     }
   };
 
@@ -86,32 +90,30 @@ export default function LoginScreen() {
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      {isLoading ? <Text style={styles.infoText}>Working...</Text> : null}
-
       <Pressable
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+        style={[styles.button, isSigningIn && styles.buttonDisabled]}
         onPress={handleSignIn}
-        disabled={isLoading}
+        disabled={isSigningIn}
       >
-        <Text style={styles.buttonText}>{isLoading ? 'Please wait' : 'Sign in'}</Text>
+        <Text style={styles.buttonText}>{isSigningIn ? 'Please wait' : 'Sign in'}</Text>
       </Pressable>
 
       <Pressable
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+        style={[styles.button, isSigningIn && styles.buttonDisabled]}
         onPress={handleSignUp}
-        disabled={isLoading}
+        disabled={isSigningIn}
       >
-        <Text style={styles.buttonText}>{isLoading ? 'Please wait' : 'Sign up'}</Text>
+        <Text style={styles.buttonText}>{isSigningIn ? 'Please wait' : 'Sign up'}</Text>
       </Pressable>
 
       <Pressable
-        style={[styles.googleButton, isLoading && styles.buttonDisabled]}
+        style={[styles.googleButton, isGoogleSigningIn && styles.buttonDisabled]}
         onPress={handleGoogleSignIn}
-        disabled={isLoading}
+        disabled={isGoogleSigningIn}
       >
         <Image source={require('../assets/google_icon.png')} style={styles.googleLogo} />
         <Text style={styles.googleButtonText}>
-          {isLoading ? 'Please wait' : 'Continue with Google'}
+          {isGoogleSigningIn ? 'Please wait' : 'Continue with Google'}
         </Text>
       </Pressable>
     </View>
@@ -143,10 +145,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#b00020',
-    fontSize: 14,
-  },
-  infoText: {
-    color: '#555',
     fontSize: 14,
   },
   button: {

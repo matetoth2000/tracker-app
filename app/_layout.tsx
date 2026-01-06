@@ -35,10 +35,13 @@ export default function RootLayout() {
 
     const isOnLogin = pathname === '/login';
 
-    if (!session && !isOnLogin) {
-      router.replace('/login');
-    } else if (session && isOnLogin) {
-      router.replace('/home');
+    if (!session) {
+      if (!isOnLogin) router.replace('/login');
+      return;
+    }
+
+    if (session && isOnLogin) {
+      router.replace('/(tabs)');
     }
   }, [hasCheckedSession, session, pathname, router]);
 
